@@ -2,7 +2,7 @@
 
 A Python-based project for analyzing Channel State Information (CSI) captured with an ESP32. The repository contains scripts for visualizing CSI amplitude patterns, comparing variance across recorded scenarios, and monitoring incoming CSI packets in 30-second windows.
 
-> **Status: Prototype / results pending validation.** The numbers shown below are from a recorded console run and have not yet been independently recalculated from the original CSV files. Treat them as preliminary.
+> **Status: Prototype; variance values reproduced from the included CSV files.** The three uploaded CSVs were parsed using the current `verify_variance.py` method and the reported rounded scores were reproduced. This confirms the current script's arithmetic on these files; it does not by itself validate the activity-classification thresholds or establish general detection accuracy.
 
 ## Project goals
 
@@ -24,7 +24,7 @@ The scenario labels describe the recordings. The results should not be interpret
 
 ## Reported variance results
 
-The following values were printed by the current `verify_variance.py` run:
+The values below were recomputed from the CSV files in this repository using the current `verify_variance.py` method (absolute values from each parsed 384-value packet array; NumPy population variance with `ddof=0` across packets for each subcarrier; then mean across subcarriers). For the post-L2 score, each packet row is first divided by its L2 norm.
 
 | Dataset | Raw variance (pre-L2) | Variance after L2 normalization |
 |---|---:|---:|
@@ -34,7 +34,15 @@ The following values were printed by the current `verify_variance.py` run:
 
 For that run, raw variance ranked `motion_04.csv` highest, followed by `empty_01.csv`, then `stationary_01.csv`. After normalization, the stationary-person score was slightly higher than the empty-room score.
 
-**Validation note:** These figures are not yet independently verified. Their meaning depends on the exact parsing, variance axis, degrees-of-freedom convention, packet filtering, and normalization procedure. Keep pre-normalization and post-normalization metrics separate.
+**Reproduction check:** The current calculation reproduced the rounded figures above from the included CSVs:
+
+| Dataset | Parsed packet arrays | Values per array | Malformed bracketed arrays |
+|---|---:|---:|---:|
+| `motion_04.csv` | 2,084 | 384 | 0 |
+| `empty_01.csv` | 2,074 | 384 | 0 |
+| `stationary_01.csv` | 2,089 | 384 | 0 |
+
+These results verify the script's reported arithmetic on the currently uploaded data. They do **not** independently validate that the metric reliably distinguishes people or motion in other rooms or conditions. Keep pre-normalization and post-normalization metrics separate.
 
 ## Live monitor
 
@@ -151,7 +159,7 @@ Before presenting final results:
 ## Limitations
 
 - The exact ESP32 board model, firmware version, CSI configuration, and capture environment still need to be documented.
-- CSV datasets are not necessarily included in this repository; without them, readers cannot independently reproduce the reported scores.
+- The CSV datasets are included in this repository, allowing readers with access to rerun the current variance calculation. Reproducing the numbers does not establish classification accuracy; that requires held-out recordings and documented evaluation.
 - Thresholds may depend on device placement, room geometry, packet rate, channel conditions, and preprocessing.
 - A small number of recordings is not enough to establish general classification performance.
 - This prototype should not be used for safety-critical decisions or covert monitoring.
