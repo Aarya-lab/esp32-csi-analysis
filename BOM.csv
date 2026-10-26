@@ -1,0 +1,9 @@
+Item,Quantity,Purpose,Status / Notes
+ESP32 development board,1,CSI capture; must match firmware/toolchain,Required; exact model TBD
+USB data cable,1,"Power, flashing, and serial communication",Required; data-capable cable
+Computer,1,Firmware tools and Python analysis,Required
+ESP-IDF/toolchain,1,Build and flash compatible firmware,Required for ESP-IDF workflow; version TBD
+Python 3,1,Run variance and plotting scripts,Required; version TBD
+Python packages,TBD,"Parsing, numerical analysis, and plotting",Use dependencies actually imported by scripts
+Wi-Fi access point/router,1,Wi-Fi environment if required by capture setup,Setup-dependent; document configuration
+External antenna,0–1,Only if supported/needed by selected board,Optional; confirm board before purchasing

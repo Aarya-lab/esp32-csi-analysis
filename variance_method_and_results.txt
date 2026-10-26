@@ -1,0 +1,50 @@
+ESP32 CSI Variance Results
+===========================
+
+Results copied from the user's verify_variance.py console output.
+These values have not been independently recalculated because the raw CSV files
+and verify_variance.py source were not provided in this turn.
+
+Dataset,Raw Variance (Pre-L2),L2 Variance (Post-L2)
+motion_04.csv,77.13,0.000601
+empty_01.csv,68.83,0.000505
+stationary_01.csv,63.69,0.000522
+
+Interpretation
+--------------
+Raw variance ordering: motion (77.13) > empty room (68.83) > stationary person (63.69).
+Post-L2 ordering: motion (0.000601) > stationary person (0.000522) > empty room (0.000505).
+
+Important verification note
+---------------------------
+Do not call the values fully verified until the calculation method in
+verify_variance.py is checked. A recommended definition for per-subcarrier
+temporal variance is:
+  1. Parse valid packets into a matrix X with shape (N_packets, 384).
+  2. Compute variance over packets for each subcarrier (axis=0).
+  3. Average the 384 per-subcarrier variances.
+Use the same valid packets and subcarrier selection for every dataset.
+
+Normalization note
+------------------
+Record exactly when L2 normalization is applied. If each packet row is normalized,
+state whether the L2 norm is computed across the 384 subcarriers per packet.
+Normalization changes the meaning and scale of variance, so pre-L2 and post-L2
+scores should be reported separately.
+
+Suggested report method
+-----------------------
+"CSI payloads were parsed into packet-by-subcarrier amplitude matrices. Malformed
+packets and payloads not containing 384 subcarrier values were excluded. Raw
+variance was calculated as the mean of the temporal variances of the 384
+subcarriers. A separate variance was calculated after the stated L2 normalization
+procedure. The results are preliminary until the script and raw CSV files are
+re-run and independently checked."
+
+Reproducibility checklist
+-------------------------
+[ ] Confirm parsing yields 384 values per accepted packet.
+[ ] Report number of valid and rejected packets per CSV.
+[ ] Confirm variance is computed across packets per subcarrier, then averaged.
+[ ] Document the exact L2 normalization axis and handling of zero-norm rows.
+[ ] Re-run all datasets using identical settings.

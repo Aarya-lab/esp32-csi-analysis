@@ -1,0 +1,4 @@
+Dataset,Raw Variance (Pre-L2),L2 Variance (Post-L2)
+motion_04.csv,77.13,0.000601
+empty_01.csv,68.83,0.000505
+stationary_01.csv,63.69,0.000522
