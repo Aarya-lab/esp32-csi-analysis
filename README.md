@@ -1,16 +1,35 @@
-# ESP32 CSI Analysis and Real-Time Activity Monitoring
+# RF Human Activity Recognition Using Wi-Fi CSI (ESP32)
 
-A Python-based project for analyzing Channel State Information (CSI) captured with an ESP32. The repository contains scripts for visualizing CSI amplitude patterns, comparing variance across recorded scenarios, and monitoring incoming CSI packets in 30-second windows.
+This project explores **RF Human Activity Recognition (HAR) using Wi-Fi Channel State Information (CSI)** captured with an ESP32. Instead of relying on camera images, the approach analyzes changes in Wi-Fi signal measurements as the radio signal interacts with people and the surrounding environment.
+
+The current prototype processes CSI amplitude data, visualizes signal patterns, compares measurements across recorded scenarios, and applies a rule-based score to classify a 30-second window as **room empty**, **person present/stationary**, or **motion detected**.
+
+> **Scope note:** The current recordings and code demonstrate an early Wi-Fi CSI sensing prototype. They do not yet demonstrate recognition of a wide set of activities (such as walking, sitting down, standing up, or falling). Those classes would require appropriately labeled training/evaluation data and a validated classifier.
 
 > **Status: Prototype; variance values reproduced from the included CSV files.** The three uploaded CSVs were parsed using the current `verify_variance.py` method and the reported rounded scores were reproduced. This confirms the current script's arithmetic on these files; it does not by itself validate the activity-classification thresholds or establish general detection accuracy.
 
-## Project goals
+## Main objective
 
-- Capture or ingest ESP32 CSI packets and extract amplitude values.
-- Visualize CSI patterns using heatmaps and selected-subcarrier plots.
-- Compare recordings from an empty room, a stationary person, and a motion scenario.
-- Explore a simple rule-based activity indicator from live CSI data.
-- Keep processing steps and reported results documented and reproducible.
+The main goal is to investigate whether **Wi-Fi CSI can be used as an RF sensing signal for recognizing human presence and activity**.
+
+### Current prototype objectives
+
+- Read CSI packets collected through an ESP32 receiver.
+- Extract absolute CSI amplitude values and inspect temporal changes across subcarriers.
+- Visualize CSI measurements using heatmaps and selected-subcarrier plots.
+- Compare three initial conditions: empty room, stationary person, and active motion.
+- Run a simple rule-based activity score on live serial data in 30-second windows.
+- Document processing steps and evaluate results reproducibly.
+
+### Current recognition scope
+
+| Current output | Intended interpretation |
+|---|---|
+| `ROOM EMPTY` | Signal remains below the configured empty-room threshold |
+| `PERSON PRESENT` | Signal falls between the configured thresholds; intended to represent a stationary/present person |
+| `MOTION DETECTED` | Signal exceeds the configured motion threshold |
+
+These are threshold-based prototype outputs, not yet validated activity-recognition predictions. Reliable HAR evaluation should report performance on separate labeled recordings using metrics such as a confusion matrix, precision, recall, and F1-score.
 
 ## Scenarios currently analyzed
 
@@ -20,11 +39,11 @@ A Python-based project for analyzing Channel State Information (CSI) captured wi
 | `stationary_01.csv` | Person present but stationary |
 | `motion_04.csv` | Active motion |
 
-The scenario labels describe the recordings. The results should not be interpreted as proof of reliable human detection until validated on additional recordings and conditions.
+The scenario labels describe the recordings used for the initial RF HAR experiment. They provide a first comparison of empty-room, stationary-person, and motion conditions; they are not yet a broad multi-class human activity dataset.
 
-## Reported variance results
+## CSI variance analysis (supporting metric)
 
-The values below were recomputed from the CSV files in this repository using the current `verify_variance.py` method (absolute values from each parsed 384-value packet array; NumPy population variance with `ddof=0` across packets for each subcarrier; then mean across subcarriers). For the post-L2 score, each packet row is first divided by its L2 norm.
+The variance scores below are supporting signal-analysis measurements for the Wi-Fi CSI HAR prototype. They were recomputed from the CSV files using the current `verify_variance.py` method: absolute values from parsed 384-value packet arrays; NumPy population variance (`ddof=0`) across packets for each subcarrier; then mean across subcarriers. For the post-L2 score, each packet row is first divided by its L2 norm. Variance is a descriptive feature, not an activity-recognition accuracy metric.
 
 | Dataset | Raw variance (pre-L2) | Variance after L2 normalization |
 |---|---:|---:|
@@ -60,7 +79,7 @@ The script expects serial lines containing a JSON array of numeric CSI values. I
 
 ### Important distinction between metrics
 
-The live monitor's activity score is **not the same metric** as the variance values in the table above. It uses normalized packet data and standard deviations, while the offline variance script may use a different calculation. Do not compare the live score directly with the offline variance numbers.
+The live monitor's activity score is **not the same metric** as the offline variance values in the table above. It uses normalized packet data and the mean of per-subcarrier standard deviations, multiplied by 1,000. Do not compare the live score directly with the offline variance numbers. The thresholds must be calibrated using the exact live-score formula and labeled recordings.
 
 The current `thresholds.json` contains:
 
