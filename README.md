@@ -82,13 +82,16 @@ The thresholds must be calibrated using the exact same preprocessing and score f
 | `thresholds.json` | Threshold values used by the live monitor |
 | `variance_results.csv` | Table of reported variance values |
 | `variance_method_and_results.txt` | Notes on variance method and validation |
+| `motion_04.csv` | CSI recording labeled active motion |
+| `empty_01.csv` | Empty-room CSI baseline recording |
+| `stationary_01.csv` | CSI recording labeled stationary person |
 | `BOM.csv` | Preliminary bill of materials |
 | `INSTRUCTIONS.md` | Setup and usage notes |
 | `*_detailed.png` | Detailed plots for individual scenarios |
 | `raw_variance_comparison.png` | Comparison of pre-normalization variance |
 | `l2_variance_comparison.png` | Comparison of post-normalization variance |
 
-Some scripts may require local CSV files or settings that are not included in the repository.
+The analysis scripts may still require settings or dependencies specific to your local ESP32/ESP-IDF setup.
 
 ## Requirements
 
@@ -159,7 +162,7 @@ Before presenting final results:
 ## Limitations
 
 - The exact ESP32 board model, firmware version, CSI configuration, and capture environment still need to be documented.
-- The CSV datasets are included in this repository, allowing readers with access to rerun the current variance calculation. Reproducing the numbers does not establish classification accuracy; that requires held-out recordings and documented evaluation.
+- The three CSV datasets are included in this repository, allowing readers with repository access to rerun the current variance calculation. Reproducing the numbers does not establish classification accuracy; that requires held-out recordings and documented evaluation.
 - Thresholds may depend on device placement, room geometry, packet rate, channel conditions, and preprocessing.
 - A small number of recordings is not enough to establish general classification performance.
 - This prototype should not be used for safety-critical decisions or covert monitoring.
