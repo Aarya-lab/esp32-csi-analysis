@@ -27,6 +27,6 @@ def verify_variance(csv_path):
     print(f"  Raw Variance (Pre-L2) : {raw_var:.2f}")
     print(f"  L2 Variance (Post-L2): {l2_var:.6f}\n")
 
-# Run on your three CSV files
+
 for fname in ["motion_04.csv", "empty_01.csv", "stationary_01.csv"]:
     verify_variance(fname)
