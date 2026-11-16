@@ -4,11 +4,11 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-# --- UPDATE THESE WITH YOUR BEST SERIAL NUMBERS ---
+
 FILES_TO_PLOT = {
-    "Empty Room": "empty_01_detailed.png",      # Score: 20.03 (Your cleanest empty baseline)
-    "Stationary": "stationary_01_detailed.png", # Score: 20.59 (Shows slight breathing/presence)
-    "Active Motion": " motion_04_detailed.png"   # Score: 22.23 (Massive disruption spikes)
+    "Empty Room": "empty_01_detailed.png",      
+    "Stationary": "stationary_01_detailed.png", 
+    "Active Motion": " motion_04_detailed.png"  
 }
 
 def parse_and_normalize(file_path):
@@ -25,7 +25,7 @@ def parse_and_normalize(file_path):
                 except: pass
                 
     matrix = np.array(packets)
-    # L2 Normalization (Your core innovation)
+    # L2 Normalization (core innovation)
     norms = np.linalg.norm(matrix, axis=1, keepdims=True)
     norms[norms == 0] = 1.0
     return matrix / norms
